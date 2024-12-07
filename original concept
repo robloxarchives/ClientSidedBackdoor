@@ -1,3 +1,11 @@
+-- [[
+
+https://v3rmillion.rip/showthread.php?tid=1065298&highlight=remove+kick+error
+
+
+]]
+
+
 local AdminPrefix = ";" -- Change this to what you want (i.e: ;kill <namehere>) (if its blank it will error)
 
 local Players = game:GetService("Players")
