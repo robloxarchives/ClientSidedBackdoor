@@ -1,0 +1,77 @@
+local adminChar = ";"  -- admin command character
+local players = game:GetService("Players")
+local localPlayer = players.LocalPlayer
+
+-- admin table
+getgenv().Admins = {
+7703773828
+}
+
+-- function to search for a player
+getgenv().findPlayer = function(name)
+for _, player in pairs(players:GetPlayers()) do
+if string.lower(player.Name):sub(1, #name) == string.lower(name) then
+return player
+end
+end
+end
+
+-- admin command list
+getgenv().AdminCommands = {
+kick = {
+func = function(player)
+if player == localPlayer then
+player:Kick("Kicked by admin")
+end
+end,
+isAdmin = true
+},
+kill = {
+func = function(player)
+if player.Character and player.Character:FindFirstChild("Humanoid") then
+player.Character.Humanoid:ChangeState(15)
+end
+end,
+isAdmin = true
+}
+}
+
+-- function to check if a player is an admin
+getgenv().isAdmin = function(player)
+for _, adminId in pairs(Admins) do
+if player.UserId == adminId then
+return true
+end
+end
+return false
+end
+
+-- function to handle admin commands
+getgenv().handleAdminCommand = function(player, message)
+if message:sub(1, 1) == adminChar then
+local args = string.split(message:sub(2), " ")
+local command = args[1]
+local targetPlayer = findPlayer(args[2])
+if AdminCommands[command] and targetPlayer then
+if isAdmin(player) then
+AdminCommands[command].func(targetPlayer)
+else
+-- handle non-admin attempt to use admin command
+end
+end
+end
+end
+
+-- connect chat event to handle admin commands
+for _, player in pairs(players:GetPlayers()) do
+player.Chatted:Connect(function(message)
+handleAdminCommand(player, message)
+end)
+end
+
+-- connect player added event to handle new players
+players.PlayerAdded:Connect(function(player)
+player.Chatted:Connect(function(message)
+handleAdminCommand(player, message)
+end)
+end)
